@@ -18,6 +18,12 @@
     "db:generate": "npm run db:generate --workspace @image-platform/api",
     "db:push": "npm run db:push --workspace @image-platform/api",
     "db:studio": "npm run db:studio --workspace @image-platform/api",
+    "build:shared": "npm run build --workspace @image-platform/shared",
+    "build:api:prod": "npm run build:shared && npm run db:generate && npm run build --workspace @image-platform/api",
+    "build:web:prod": "npm run build:shared && npm run build --workspace @image-platform/web",
+    "start:api:prod": "npm run start:prod --workspace @image-platform/api",
+    "start:web:prod": "npm run start --workspace @image-platform/web",
+    "deploy:api:migrate": "npm run db:push",
     "build": "npm run build --workspace @image-platform/shared && npm run build --workspace @image-platform/api && npm run build --workspace @image-platform/web",
     "lint": "npm run lint --workspaces"
   },

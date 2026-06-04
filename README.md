@@ -56,6 +56,11 @@ npm run dev
 
 前端默认运行在 `http://localhost:3000`，API 默认运行在 `http://localhost:3001`。
 
+## 发布上线
+
+推荐按“Vercel 前端 + Render API + PostgreSQL + Redis/Key Value”的方式发布。
+部署清单、生产脚本和环境变量说明见 `docs/deployment.md`。
+
 ### 分步启动
 
 1. 安装依赖
