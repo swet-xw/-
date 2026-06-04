@@ -1,0 +1,54 @@
+services:
+  dev:
+    image: node:22-alpine
+    container_name: image-platform-dev
+    profiles:
+      - app
+    working_dir: /app
+    command: >
+      sh -c "npm install &&
+      npm run db:generate &&
+      until npm run db:push; do sleep 2; done &&
+      npm run dev"
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgresql://image_platform:image_platform_dev@postgres:5432/image_platform?schema=public
+      REDIS_URL: redis://redis:6379
+      GENERATION_WORKER_CONCURRENCY: 3
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3001
+      DEV_OWNER_EMAIL: owner@example.com
+      DEV_MONTHLY_IMAGE_QUOTA: 1000
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: image-platform-postgres
+    environment:
+      POSTGRES_DB: image_platform
+      POSTGRES_USER: image_platform
+      POSTGRES_PASSWORD: image_platform_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: image-platform-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  node_modules:
+  postgres_data:
+  redis_data:

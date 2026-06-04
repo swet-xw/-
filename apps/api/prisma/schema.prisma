@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GenerationTask {
+  id              String    @id
+  projectId       String?
+  userId          String?
+  status          String    @default("queued")
+  provider        String
+  model           String
+  task            String
+  prompt          String
+  negativePrompt  String?
+  size            String?
+  count           Int?
+  seed            Int?
+  referenceImages Json?
+  extra           Json?
+  images          Json      @default("[]")
+  error           String?
+  meta            Json?
+  costCents       Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([projectId, createdAt])
+  @@index([provider, model])
+}
+
+model User {
+  id        String    @id
+  email     String    @unique
+  name      String
+  role      String    @default("owner")
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id                String         @id
+  name              String
+  ownerId           String
+  owner             User           @relation(fields: [ownerId], references: [id])
+  monthlyImageQuota Int            @default(1000)
+  apiKeys           ApiKey[]
+  usage             UsageLedger[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([ownerId])
+}
+
+model ApiKey {
+  id         String    @id
+  projectId  String
+  project    Project   @relation(fields: [projectId], references: [id])
+  name       String
+  keyHash    String    @unique
+  prefix     String
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([projectId])
+}
+
+model ModelPrice {
+  id                 String   @id
+  provider           String
+  model              String
+  pricePerImageCents Int
+  currency           String   @default("USD")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([provider, model])
+}
+
+model UsageLedger {
+  id         String   @id
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  taskId     String
+  provider   String
+  model      String
+  imageCount Int
+  costCents  Int
+  createdAt  DateTime @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([taskId])
+}
