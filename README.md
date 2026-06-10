@@ -59,7 +59,9 @@ npm run dev
 ## 发布上线
 
 推荐按“Vercel 前端 + Render API + PostgreSQL + Redis/Key Value”的方式发布。
-部署清单、生产脚本和环境变量说明见 `docs/deployment.md`。
+没有自定义域名也可以先上线，先使用 `*.vercel.app` 和 `*.onrender.com`
+默认地址即可。部署清单、生产脚本和环境变量说明见 `docs/deployment.md`，
+生产环境变量模板见 `.env.production.example`。
 
 ### 分步启动
 
